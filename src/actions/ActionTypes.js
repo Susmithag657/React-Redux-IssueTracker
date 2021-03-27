@@ -22,6 +22,7 @@ export const FILTER_BY_STATUS = "FILTER_BY_STATUS";
 export const FILTER_BY_SEVERITY = "FILTER_BY_SEVERITY";
 export const SORT_BY_DATECREATED = "SORT_BY_DATECREATED";
 export const SORT_BY_DATERESOLVED = "SORT_BY_DATERESOLVED";
+export const SET_VISIBLE_FILTER = "SET_VISIBLE_FILTER";
 
 //-----------------Message Actions-------------------------
 

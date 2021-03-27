@@ -4,8 +4,11 @@ import UserApi from "../data/UserApi";
 
 //-------------------Messages---------------------------------
 
-export const setMessage=(message)=>({type:Types.SET_MESSAGE,payload:message});
-export const clearMessage=(message)=>({type:Types.CLEAR_MESSAGE})
+export const setMessage = (message) => ({
+  type: Types.SET_MESSAGE,
+  payload: message
+});
+export const clearMessage = (message) => ({ type: Types.CLEAR_MESSAGE });
 
 //-------------------------User--------------------------------
 // export function signUp(user) {
@@ -44,10 +47,10 @@ export function addUser(user) {
       console.log("Inside addUser action..");
       console.log(response);
       dispatch(signUpSuccess(response.data));
-      dispatch(setMessage('Signup successfull'));
+      dispatch(setMessage("Signup successfull"));
     } catch (error) {
       dispatch(signUpFail(error.toString()));
-      dispatch(setMessage('Sign up Failed'));
+      dispatch(setMessage("Sign up Failed"));
     }
   };
 }
@@ -75,10 +78,10 @@ export function loginUser(user) {
       const response = await UserApi.login(user);
       console.log(response);
       if (response.data.length) {
-         dispatch(loginSuccess(response.data[0]));
-         dispatch(setMessage('Login Success!'));
-        }  else { 
-          dispatch(loginFail('login Failed!'));
+        dispatch(loginSuccess(response.data[0]));
+        dispatch(setMessage("Login Success!"));
+      } else {
+        dispatch(loginFail("login Failed!"));
       }
     } catch (error) {
       throw error;
@@ -113,6 +116,9 @@ export function filterIssuesBySeverity(severity) {
 }
 export function filterIssuesByDescription(data) {
   return { type: Types.FILTER_BY_DESCRIPTION, payload: data };
+}
+export function setVisibilityFilter(filter) {
+  return { type: Types.SET_VISIBLE_FILTER, payload: filter };
 }
 export function addIssue(issue) {
   return async function (dispatch, getState) {

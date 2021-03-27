@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import { connect } from "react-redux";
 import Issue from "../Issues/Issue";
 import { Link } from "react-router-dom";
+import { Multiselect } from "multiselect-react-dropdown";
 import {
   filterIssuesByStatus,
   filterIssuesByDescription,
-  filterIssuesBySeverity
+  filterIssuesBySeverity,
+  setVisibilityFilter
 } from "../../actions/ActionCreators";
 
 const Issues = ({
@@ -13,16 +15,49 @@ const Issues = ({
   filterIssuesByDescription,
   filterIssuesBySeverity,
   filterIssuesByStatus,
+  setVisibilityFilter,
+  visibleFilters,
+  sortByFilters,
   isLoggedIn
 }) => {
-  //const [currentDisplayed, setcurrentDisplayed] = useState(issues);
-  //const [filter, setfilter] = useState('');
+  const options = [
+    { name: "Status", id: 1 },
+    { name: "Severity", id: 2 },
+    { name: "Created Date", id: 3 },
+    { name: "Resolved Date", id: 4 }
+  ];
+  const selectedValues = options.reduce((acc, i) => {
+    if (visibleFilters.includes(i.name)) {
+      acc.push(i);
+    }
+    return acc;
+  }, []);
+  const multiselectRef = React.createRef();
+  const onSelect = (selectedList, selectdItem) => {
+    const item =
+      selectedList.length &&
+      selectedList.reduce((acc, i) => {
+        acc.push(i.name);
+        return acc;
+      }, []);
+
+    setVisibilityFilter(item);
+    console.log(item);
+  };
+  const onRemove = (selectedList, removedItem) => {
+    const item =
+      selectedList.length &&
+      selectedList.reduce((acc, i) => {
+        acc.push(i.name);
+        return acc;
+      }, []);
+    console.log(item);
+    setVisibilityFilter(item);
+  };
+
   const handleFilterChange = (e) => {
     e.preventDefault();
     filterIssuesByDescription(e.target.value);
-    //setfilter(e.target.value);
-    // const newDisplayed=currentDisplayed.filter(issue=>issue.description.toLowerCase().includes(filter))
-    // setcurrentDisplayed(newDisplayed);
   };
   const handleSeverityFilter = (e) => {
     e.preventDefault();
@@ -35,10 +70,27 @@ const Issues = ({
   return (
     <div className="container">
       <h1>Issue Page</h1>
-      <div className="row justify-content-end">
+      <div className="row m-2 mx-auto justify-content-start">
+        <div className="col-md-8">
+          <Multiselect
+            options={options}
+            displayValue="name"
+            showCheckbox={true}
+            onSelect={onSelect}
+            onRemove={onRemove}
+            ref={multiselectRef}
+            placeholder="Select to Customize"
+            selectedValues={selectedValues}
+            closeIcon="cancel"
+            closeOnSelect={true}
+            hidePlaceholder={true}
+          />
+        </div>
+      </div>
+      <div className="d-flex flex-row justify-content-evenly mb-2">
         <div className="col-sm-2">
           <select
-            class="form-select"
+            className="form-select"
             aria-label="Default select example"
             onChange={(e) => handleSeverityFilter(e)}
           >
@@ -82,13 +134,17 @@ const Issues = ({
       </div>
       {issues &&
         issues.map((issue) => (
-          <Issue key={issue.id} issue={issue} />
+          <Issue key={issue.id} issue={issue} filters={visibleFilters} />
         ))}
     </div>
   );
 };
 const mapStateToProps = (state) => {
-  return { issues: state.issues.issues };
+  return {
+    issues: state.issues.issues,
+    visibleFilters: state.issues.visibilityFilter,
+    sortByFilters: state.issues.filters
+  };
 };
 
 const mapDispatchToProps = (dispatch) => {
@@ -97,7 +153,8 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(filterIssuesByDescription(filter)),
     filterIssuesBySeverity: (filter) =>
       dispatch(filterIssuesBySeverity(filter)),
-    filterIssuesByStatus: (filter) => dispatch(filterIssuesByStatus(filter))
+    filterIssuesByStatus: (filter) => dispatch(filterIssuesByStatus(filter)),
+    setVisibilityFilter: (filter) => dispatch(setVisibilityFilter(filter))
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Issues);
