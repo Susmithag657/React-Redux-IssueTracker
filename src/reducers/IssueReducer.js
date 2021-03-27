@@ -3,7 +3,8 @@ import * as Types from "../actions/ActionTypes";
 const initialSate = {
   loading: true,
   issues: [],
-  filters: { status: "All", severity: "All", description: "" }
+  filters: { status: "All", severity: "All", description: "" },
+  visibilityFilter: ["Severity", "Created Date", "Status", "Resolved Date"]
 };
 
 const IssueReducer = (state = initialSate, action) => {
@@ -46,6 +47,24 @@ const IssueReducer = (state = initialSate, action) => {
         issues: [...filtered],
         filters: { ...state.filters, description: value }
       };
+    }
+    case Types.SET_VISIBLE_FILTER: {
+      const filters = action.payload;
+      if (filters.length > 0) {
+        return {
+          ...state,
+          issues: [...state.issues],
+          filters: { ...state.filters },
+          visibilityFilter: [...action.payload]
+        };
+      } else {
+        return {
+          ...state,
+          issues: [...state.issues],
+          filters: { ...state.filters },
+          visibilityFilter: []
+        };
+      }
     }
     case Types.ADD_ISSUE: {
       return { ...state, issues: [...state.issues, action.payload] };
